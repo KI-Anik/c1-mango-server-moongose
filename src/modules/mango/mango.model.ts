@@ -11,7 +11,10 @@ const mangoSchema = new Schema<IMango>(
     origin: { type: String, default: "Unknown" },
     season: { type: String, enum: ["Summer", "Winter"], required: true },
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    versionKey: false
+   }
 );
 
 const Mango = model<IMango>("Mango", mangoSchema);

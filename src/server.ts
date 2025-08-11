@@ -1,20 +1,7 @@
-import express from "express";
-import cors from "cors";
 import mongoose from "mongoose";
 import config from "./config";
-import userRoute from "./modules/user/user.route";
-import routes from "./modules/routes";
+import app from "./app";
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.use(routes);
-
-app.get("/", (req, res) => {
-  res.send({ success: true, message: "I am here " });
-});
 
 async function server() {
   try {

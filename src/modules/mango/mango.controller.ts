@@ -1,96 +1,64 @@
 import { Request, Response } from "express";
-import Mango from "./mango.model";
-import { mongo } from "mongoose";
+import { mangoService } from "./mango.service";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import AppError from "../../error/AppError";
 
-const createMango = async (req: Request, res: Response) => {
-  try {
-    const data = await Mango.create(req.body);
+const createMango = catchAsync(async (req: Request, res: Response) => {
+  const data = await mangoService.createMangoIntoDB(req.body)
 
-    res.send({
-      success: true,
-      message: "Mango Created Successfully",
-      data,
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Error Hppend",
-      error,
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Mango created successfully",
+    data
+  })
+})
 
-const getMangos = async (req: Request, res: Response) => {
-  try {
-    const data = await Mango.find();
-    res.send({
-      success: true,
-      message: "Mango getting Successfully",
-      data,
-    });
-  } catch (error) {
-    res.send({
-      success: true,
-      message: "Error",
-      error,
-    });
-  }
-};
+const getAllMangos = catchAsync(async (req: Request, res: Response) => {
+  const data = await mangoService.getAllMangosFromDB()
 
-const getMangoById = async (req: Request, res: Response) => {
-  try {
-    const mangoId = req.params.mangoId;
-    const data = await Mango.findById(mangoId);
-    res.send({
-      success: true,
-      message: "Mango getting Successfully",
-      data,
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Error",
-      error,
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'All mango getting done',
+    data
+  })
+})
 
-const updateMango = async (req: Request, res: Response) => {
-  try {
-    const mangoId = req.params.mangoId;
+const getMangoById = catchAsync(async (req: Request, res: Response) => {
+  const mangoId = req.params.mangoId
+  const data = await mangoService.getMangoByIdFromDB(mangoId)
 
-    const data = await Mango.findByIdAndUpdate(mangoId, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    res.send({
-      success: true,
-      message: "Mango updated Successfully",
-      data,
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Error",
-      error,
-    });
-  }
-};
-
-const deleteMangoById = async (req: Request, res: Response) => {
-  const mangoId = req.params.mangoId;
-
-  const data = await Mango.findByIdAndDelete(mangoId);
   res.send({
     success: true,
-    message: "Mango deleted Successfully",
-    data,
-  });
-};
+    message: "mango getting done",
+    data
+  })
+})
+
+const updateMango = catchAsync(async (req: Request, res: Response) => {
+  const mangoId = req.params.mangoId;
+  const payload = req.body;
+
+  const data = await mangoService.updateMango(mangoId, payload)
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Mango updated successfully",
+    data
+  })
+})
+
+
+const deleteMangoById = catchAsync(async (req: Request, res: Response) => {
+
+})
 
 export const mangoController = {
   createMango,
-  getMangos,
+  getAllMangos,
   getMangoById,
   updateMango,
   deleteMangoById,
