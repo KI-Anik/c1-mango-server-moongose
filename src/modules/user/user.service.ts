@@ -2,6 +2,7 @@ import { IUser } from "./user.interface";
 import bcrypt from "bcryptjs";
 import User from "./user.model";
 import AppError from "../../error/AppError";
+import jwt from "jsonwebtoken";
 
 const registerUser = async (payload: IUser) => {
     payload.password = await bcrypt.hash(payload.password, 10)
@@ -18,7 +19,14 @@ const loginUser = async (payload: IUser) => {
     const checkPassword = await bcrypt.compare(payload.password, isUserExist.password)
     if (!checkPassword) throw new AppError(401, "Password not matched")
 
-    return isUserExist
+        const jwtPayload = {
+            email: isUserExist.email,
+            role: isUserExist.role
+        }
+
+        const accessToken = jwt.sign(jwtPayload, 'very secret',{expiresIn: '1h'})
+
+    return accessToken
 }
 
 export const userService = {
