@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import User from "./user.model";
+import { userService } from "./user.service";
+import { sendResponse } from "../../utils/sendResponse";
 
 
 
 const registerUser = async (req: Request, res: Response) => {
-  const payload = req.body;
-  const user = new User(payload);
-
-  const data = await user.save();
+  const data = await userService.registerUser(req.body)
 
   res.send({
     success: true,
@@ -15,6 +14,18 @@ const registerUser = async (req: Request, res: Response) => {
     data,
   });
 };
+
+const loginUser = async(req : Request, res: Response)=>{
+  const data = await userService.loginUser(req.body)
+
+  sendResponse(res,{
+    statusCode: 201,
+    success: true,
+    message: "login successfull",
+    data
+  } )
+
+}
 
 const getUsers = async (req: Request, res: Response) => {
   const data = await User.find();
@@ -26,4 +37,4 @@ const getUsers = async (req: Request, res: Response) => {
   });
 };
 
-export { registerUser, getUsers };
+export { registerUser, loginUser, getUsers };
